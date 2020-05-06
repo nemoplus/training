@@ -5,19 +5,20 @@ __version__ = "0.0.1"
 import tkinter as tk
 
 BUTTONS = [
-  ['7', '8', '9', '/'],
-  ['4', '5', '6', '*'],
-  ['1', '2', '3', '-'],
-  ['0', '.', '=', '+'],
-  ['C']
+    ['%', '(', ')', '/'],
+    ['7', '8', '9', '*'],
+    ['4', '5', '6', '-'],
+    ['1', '2', '3', '+'],
+    ['0', '.', '=', 'C'],
 ]
 
 
+
 def run():
-    def make_click(ch):
+    def make_click(ch:str):
         def click(e):
             if ch == '=':
-                calc(0)
+                calc(e)
             elif ch == 'C':
                 label["text"] = ""
                 text.delete(0, tk.END)
@@ -26,28 +27,37 @@ def run():
         return click
 
     def calc(e):
-        label["text"] = '= ' + str(eval(text.get()))
+        try:
+            label["text"] = '= ' + str(eval(text.get()))
+        except Exception as err:
+            label["text"] = err
 
     win = tk.Tk()
-    text = tk.Entry(win, font=('', 20), justify="center")
-    label = tk.Label(win, font=('', 20), anchor="center")
+    win.title("電卓")
 
+    text  = tk.Entry(win, font=('', 20), justify="center")
     text.pack(fill='x')
     text.bind('<Return>', calc)
 
+    label = tk.Label(win, font=('', 20), anchor="center")
     label.pack(fill='x')
 
     fr = tk.Frame(win)
     fr.pack()
+    count_y = 0
+    count_x = 0
     for y, cols in enumerate(BUTTONS):
+        count_tmp = 0
         for x, n in enumerate(cols):
-            # print(y, ", ", x, " : ", n)
+            count_tmp += 1
             btn = tk.Button(fr, text=n, font=('', 20), width=6, height=3)
             btn.grid(row = y + 1, column = x + 1)
             btn.bind('<1>', make_click(n))
+        count_y += 1
+        if count_x < count_tmp:
+            count_x = count_tmp
 
-    win.title("電卓")
-    win.geometry("600x800")
+    win.geometry(str( count_x * 100) + "x" + str(count_y * 120))
     win.mainloop()
 
 
